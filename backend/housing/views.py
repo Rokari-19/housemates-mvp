@@ -19,6 +19,9 @@ class ListingViewSet(viewsets.ModelViewSet):
  def perform_update(self,serializer):
   if serializer.instance.owner_id!=self.request.user.id and not self.request.user.is_staff:raise PermissionDenied('You cannot edit this listing.')
   serializer.save()
+ def perform_destroy(self,instance):
+  if instance.owner_id!=self.request.user.id and not self.request.user.is_staff:raise PermissionDenied('You cannot delete this listing.')
+  instance.delete()
  @action(detail=False,methods=['get'],permission_classes=[permissions.IsAuthenticated],url_path='mine')
  def mine(self,request):return Response(self.get_serializer(self.get_queryset(),many=True).data)
 class EnquiryViewSet(viewsets.ModelViewSet):
