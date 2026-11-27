@@ -3,11 +3,24 @@
 ## Quickstart
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-python manage.py migrate
+cp .env.example .env
+python manage.py migrate --run-syncdb
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-API routes: `/api/health/`; auth `/api/auth/signup`, `/login`, `/logout`, `/me`, `/profile`; housing `/api/housing/listings/`, `/enquiries/`; matching `/api/matching/matches/`; safety `/api/safety/reports/`. New provider listings are queued for review. Matching uses disclosed household preferences, not protected attributes. Use PostgreSQL in production, configure environment secrets, HTTPS, backups and restricted access before launch.
+The API is served from `/api/`; Django Admin is at `/admin/`.
+
+## Apps
+
+- `accounts`: custom user roles, JWT login/signup and seeker profiles
+- `housing`: listings, hostel metadata, listing photos, enquiries, viewing requests and verification evidence
+- `matching`: explainable rules-based matches and consent-based introductions
+- `safety`: user blocks and safety reports
+
+Provider listings are created in `review` status and are not returned to anonymous search until a staff moderator changes them to `active`. Moderators can add itemised verification checks through Django Admin.
+
+Use PostgreSQL and committed initial migrations for staging/production. Set secret/environment values, HTTPS, restrictive CORS, backups and monitoring before launch. No payments, escrow or lending functionality is included.
